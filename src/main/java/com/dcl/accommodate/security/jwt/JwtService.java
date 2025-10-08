@@ -21,7 +21,7 @@ import java.util.Map;
 @Service
 public class JwtService {
 
-    // must be encoded base64 String
+
     private final Key key;
 
     public JwtService(AppEnv env){

@@ -23,16 +23,16 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "userId")
+    @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "firstName",nullable = false)
+    @Column(name = "first_name",nullable = false)
     private String firstName;
 
-    @Column(name = "lastName",nullable = false)
+    @Column(name = "last_name",nullable = false)
     private String lastName;
 
-    @Column(name = "dateOfBirth")
+    @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
     @Column(name = "role",nullable = false)
@@ -45,17 +45,17 @@ public class User {
     @Column(name = "password",nullable = false)
     private String password;
 
-    @Column(name = "phoneNumber")
+    @Column(name = "phone_number")
     private String phoneNumber;
 
     @Column(name = "avatar")
     private String avatar;
 
-    @Column(name = "createdAt",nullable = false,updatable = false)
+    @Column(name = "created_at",nullable = false,updatable = false)
     @CreatedDate
     private Instant createdDate;
 
-    @Column(name = "lastModifiedAt")
+    @Column(name = "last_modified_at")
     @LastModifiedDate
     private Instant lastModifiedDate;
 
