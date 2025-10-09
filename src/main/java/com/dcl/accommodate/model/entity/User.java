@@ -1,8 +1,8 @@
-package com.dcl.accommodate.model;
+package com.dcl.accommodate.model.entity;
 
-import com.dcl.accommodate.enums.UserRole;
+import com.dcl.accommodate.model.enums.UserRoles;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -11,12 +11,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.util.UUID;
 
+@Data
 @Entity
-@Getter
-@Setter
 @Table(name = "users")
-@EntityListeners(AuditingEntityListener.class)
+@EntityListeners({AuditingEntityListener.class})
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
@@ -31,9 +31,9 @@ public class User {
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "user_role", nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserRole userRole;
+    @Column(name = "user_role", nullable = false)
+    private UserRoles userRole;
 
     @Column(name = "email", nullable = false, unique = true)
     private String email;
@@ -47,12 +47,11 @@ public class User {
     @Column(name = "avatar")
     private String avatar;
 
-    @Column(name = "created_date",nullable = false, updatable = false)
+    @Column(name = "created_date", nullable = false , updatable = false)
     @CreatedDate
     private Instant createdDate;
 
     @Column(name = "last_modified_date")
     @LastModifiedDate
     private Instant lastModifiedDate;
-
 }
