@@ -22,7 +22,7 @@ public class UserServiceImpl implements UserService {
             throw new UserAlreadyExistByEmailException("User already registered with such email ID");
         var user = this.toUser(registration);
         //All users are GUEST by default
-        user.setRole(UserRole.GUEST);
+        user.setUserRole(UserRole.GUEST);
         repository.save(user);
     }
 
