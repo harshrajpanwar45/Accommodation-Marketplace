@@ -14,35 +14,31 @@ import java.util.UUID;
 @Entity
 @Getter
 @Setter
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 @Table(name = "users")
 @EntityListeners(AuditingEntityListener.class)
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "first_name",nullable = false)
+    @Column(name = "first_name", nullable = false)
     private String firstName;
 
-    @Column(name = "last_name",nullable = false)
+    @Column(name = "last_name", nullable = false)
     private String lastName;
 
     @Column(name = "date_of_birth")
     private LocalDate dateOfBirth;
 
-    @Column(name = "role",nullable = false)
+    @Column(name = "user_role", nullable = false)
     @Enumerated(EnumType.STRING)
-    private UserRole role;
+    private UserRole userRole;
 
-    @Column(name = "email",nullable = false,unique = true)
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
 
-    @Column(name = "password",nullable = false)
+    @Column(name = "password", nullable = false)
     private String password;
 
     @Column(name = "phone_number")
@@ -51,11 +47,11 @@ public class User {
     @Column(name = "avatar")
     private String avatar;
 
-    @Column(name = "created_at",nullable = false,updatable = false)
+    @Column(name = "created_date",nullable = false, updatable = false)
     @CreatedDate
     private Instant createdDate;
 
-    @Column(name = "last_modified_at")
+    @Column(name = "last_modified_date")
     @LastModifiedDate
     private Instant lastModifiedDate;
 
