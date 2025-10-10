@@ -5,10 +5,9 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.nio.charset.StandardCharsets;
+
 import java.security.Key;
 import java.time.Duration;
 import java.util.Base64;
@@ -28,10 +27,20 @@ public class JwtService {
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(env.getJwt().getSecret()));
     }
 
-    public String generateToken(Map<String,Object> claims, String subject, Duration ttl){
+    public String generateAccessToken(Map<String,Object> claims, String subject, Duration ttl){
         var systemMillis = System.currentTimeMillis();
         return Jwts.builder()
                 .setClaims(claims)
+                .setIssuedAt(new Date(systemMillis))
+                .setExpiration(new Date(systemMillis + ttl.toMillis()))
+                .setSubject(subject)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact(); //
+    }
+
+    public String generateRefreshToken(String subject, Duration ttl){
+        var systemMillis = System.currentTimeMillis();
+        return Jwts.builder()
                 .setIssuedAt(new Date(systemMillis))
                 .setExpiration(new Date(systemMillis + ttl.toMillis()))
                 .setSubject(subject)
