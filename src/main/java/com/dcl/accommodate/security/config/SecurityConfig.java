@@ -2,6 +2,8 @@ package com.dcl.accommodate.security.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,12 +23,12 @@ public class SecurityConfig {
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests(authorize ->
+        http.csrf(AbstractHttpConfigurer::disable);
+
+        http.authorizeHttpRequests(authorize ->
                         authorize.requestMatchers(
-                                "/api/v1/health",
-                                "/api/v1/register").permitAll()
+                                "/api/v1/public/**")
+                                .permitAll()
                                 .anyRequest().authenticated());
 
         http.sessionManagement(session ->
@@ -35,5 +37,10 @@ public class SecurityConfig {
         // TODO: add custom filter.
 
         return http.build();
+    }
+
+    @Bean
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
     }
 }

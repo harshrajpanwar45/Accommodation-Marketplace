@@ -52,6 +52,7 @@ public record UserRegistrationRequest(
 
 
         @NotNull(message = "password cannot be null")
+        @NotBlank(message = "Password cannot be blank")
         @Pattern(
                 regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+\\-=\\[\\]{};':\"\\|,.<>\\/?]).{8,20}$",
                 message = " Must be 8 to 20 characters long. Must include at least one uppercase letter, one lowercase letter, one digit, and one special character."

@@ -3,6 +3,7 @@ package com.dcl.accommodate.security.config;
 import com.dcl.accommodate.model.User;
 import com.dcl.accommodate.repository.UserRepository;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,7 +26,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         return org.springframework.security.core.userdetails.User
                 .builder()
                 .username(user.getEmail())
-                .username(user.getPassword())
+                .password(user.getPassword())
                 .build();
     }
 }
