@@ -8,6 +8,7 @@ import com.dcl.accommodate.exceptions.UserAlreadyExistByEmailException;
 import com.dcl.accommodate.model.User;
 import com.dcl.accommodate.repository.UserRepository;
 import com.dcl.accommodate.security.jwt.JwtService;
+import com.dcl.accommodate.security.jwt.JwtType;
 import com.dcl.accommodate.service.contracts.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,16 +56,40 @@ public class UserServiceImpl implements UserService {
         var user = repository.findByEmail(auth.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
 
-        Map<String,Object> claims = new HashMap<>();
-        claims.put("email",user.getEmail());
-        claims.put("role",user.getUserRole().name());
+        var accessToken = generateAccessToken(user);
+        var refreshToken = generateRefreshToken(user);
 
         return new AuthResponse(
-                user.getEmail(),
-                jwtService.generateAccessToken(claims, user.getUserId().toString(), Duration.ofSeconds(30)),
-                30,
-                jwtService.generateRefreshToken(user.getUserId().toString(), Duration.ofHours(1)),
-                1);
+                user.getUserId().toString(),
+                accessToken.token(),
+                accessToken.ttl().toSeconds(),
+                refreshToken.token(),
+                refreshToken.ttl().toSeconds()
+        );
+    }
+
+    private JwtService.TokenResult generateRefreshToken(User user) {
+        var tokenConfig = new JwtService.TokenConfig(
+                new HashMap<>(),
+                user.getUserId().toString(),
+                JwtType.REFRESH
+        );
+
+        return jwtService.generateToken(tokenConfig);
+    }
+
+    private JwtService.TokenResult generateAccessToken(User user) {
+        Map<String,Object> claims = new HashMap<>();
+        claims.put("email", user.getEmail());
+        claims.put("role",user.getUserRole().name());
+
+        var tokenConfig = new JwtService.TokenConfig(
+                claims,
+                user.getUserId().toString(),
+                JwtType.ACCESS
+        );
+
+        return jwtService.generateToken(tokenConfig);
     }
 
     private User toUser(UserRegistrationRequest registration) {

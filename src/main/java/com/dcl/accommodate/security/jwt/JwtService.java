@@ -22,37 +22,52 @@ public class JwtService {
 
 
     private final Key key;
+    private final AppEnv env;
 
-    public JwtService(AppEnv env){
+    public JwtService(AppEnv env, AppEnv env1){
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(env.getJwt().getSecret()));
+        this.env = env1;
     }
 
-    public String generateAccessToken(Map<String,Object> claims, String subject, Duration ttl){
+    public record TokenConfig(
+            Map<String,Object> claims,
+            String subject,
+            JwtType jwtType
+    ){
+    }
+
+    public record TokenResult(
+            String token,
+            Duration ttl
+    ){
+    }
+
+    public TokenResult generateToken(TokenConfig config){
         var systemMillis = System.currentTimeMillis();
-        return Jwts.builder()
-                .setClaims(claims)
+
+        Duration ttl = config.jwtType.equals(JwtType.ACCESS)
+                ? env.getJwt().getAccessTtl()
+                : env.getJwt().getRefreshTtl();
+
+        String token = Jwts.builder()
+                .setHeaderParam("type",config.jwtType.name())
+                .setClaims(config.claims)
                 .setIssuedAt(new Date(systemMillis))
                 .setExpiration(new Date(systemMillis + ttl.toMillis()))
-                .setSubject(subject)
+                .setSubject(config.subject)
                 .signWith(key, SignatureAlgorithm.HS256)
-                .compact(); //
-    }
+                .compact();
 
-    public String generateRefreshToken(String subject, Duration ttl){
-        var systemMillis = System.currentTimeMillis();
-        return Jwts.builder()
-                .setIssuedAt(new Date(systemMillis))
-                .setExpiration(new Date(systemMillis + ttl.toMillis()))
-                .setSubject(subject)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact(); //
+        return new TokenResult(
+                token,
+                ttl
+        );
     }
-
 
     private Claims getClaims(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(key)
-                .build()//return a parser to parse JWT
+                .build()    // return a parser to parse JWT
                 .parseClaimsJws(token)
                 .getBody();
     }
