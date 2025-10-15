@@ -3,7 +3,9 @@ package com.dcl.accommodate.service.implementation;
 
 import com.dcl.accommodate.dto.request.UserLoginRequest;
 import com.dcl.accommodate.dto.request.UserRegistrationRequest;
+import com.dcl.accommodate.dto.request.UserUpdateRequest;
 import com.dcl.accommodate.dto.response.AuthResponse;
+import com.dcl.accommodate.dto.response.UserResponse;
 import com.dcl.accommodate.enums.UserRole;
 import com.dcl.accommodate.exceptions.UserAlreadyExistByEmailException;
 import com.dcl.accommodate.model.User;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Supplier;
 
@@ -67,6 +70,49 @@ public class UserServiceImpl implements UserService {
         User user = repository.findById(userId).orElseThrow(userNotFound);
 
         return grantTokens(user);
+    }
+
+    @Override
+    public UserResponse userProfile() {
+        UUID userId = getCurrentUserId().get();
+
+        User user = repository.findById(userId).get();
+        return toUserResponse(user);
+    }
+
+    @Override
+    public UserResponse updateUser(UserUpdateRequest request) {
+        UUID userId = getCurrentUserId().get();
+
+        User user = repository.findById(userId).get();
+        mergeRequestToUser(user, request);
+
+        user = repository.save(user);
+
+        return toUserResponse(user);
+    }
+
+    private static void mergeRequestToUser(User user, UserUpdateRequest request) {
+        user.setFirstName(request.firstName());
+        user.setLastName(request.lastName());
+        user.setEmail(request.email());
+        user.setDateOfBirth(request.dateOfBirth());
+        user.setPhoneNumber(request.phoneNumber());
+    }
+
+    private static UserResponse toUserResponse(User user) {
+        return UserResponse.builder()
+                .userId(user.getUserId())
+                .firstName(user.getFirstName())
+                .lastName(user.getLastName())
+                .email(user.getEmail())
+                .dateOfBirth(user.getDateOfBirth())
+                .phoneNumber(user.getPhoneNumber())
+                .userRole(user.getUserRole())
+                .avatar(user.getAvatar())
+                .lastModifiedDate(user.getLastModifiedDate())
+                .createdDate(user.getCreatedDate())
+                .build();
     }
 
     private AuthResponse grantTokens(User user) {
