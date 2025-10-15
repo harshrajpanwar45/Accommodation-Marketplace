@@ -10,4 +10,7 @@ public interface UserService {
     public void registerUser(UserRegistrationRequest registration);
 
     public AuthResponse loginUser(UserLoginRequest request);
+
+    public AuthResponse refreshLogin();
+
 }

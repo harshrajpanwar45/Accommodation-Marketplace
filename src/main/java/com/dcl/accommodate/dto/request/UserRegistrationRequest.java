@@ -19,8 +19,8 @@ public record UserRegistrationRequest(
         @JsonProperty("first_name")
         String firstName,
 
-        @NotNull(message = "first_name cannot be null")
-        @NotBlank(message = "first_name cannot be blank")
+        @NotNull(message = "last_name cannot be null")
+        @NotBlank(message = "last_name cannot be blank")
         @Pattern(
                 regexp = "^[A-Z][a-zA-Z\\s'-]{0,49}$",
                 message = "last_name must be between 1 to 50 characters long"

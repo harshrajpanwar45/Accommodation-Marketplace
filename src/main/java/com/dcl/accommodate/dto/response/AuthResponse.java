@@ -10,12 +10,12 @@ public record AuthResponse(
         String accessToken,
 
         @JsonProperty("access_validity")
-        int accessValidity,
+        long accessValidity,
 
         @JsonProperty("refresh_token")
         String refreshToken,
 
         @JsonProperty("refresh_validity")
-        int refreshValidity
+        long refreshValidity
 ) {
 }

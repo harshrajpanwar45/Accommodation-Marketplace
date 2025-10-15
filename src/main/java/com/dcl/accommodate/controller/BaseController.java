@@ -7,15 +7,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/public/api/v1")
+@RequestMapping("/api/v1")
 public class BaseController {
 
-    @GetMapping("/health")
-    public ResponseEntity<ApiAck> health(){
+    @GetMapping("/public/health")
+    public ResponseEntity<ApiAck> health() {
         return ResponseEntity.ok(
                 new ApiAck(
                         true,
-                        "Accommodation MarketPlace is Up and Running."
+                        "Accommodation Marketplace is UP and RUNNING."
                 ));
     }
 }

@@ -19,7 +19,7 @@ public class FieldErrorExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        List<FieldError> errors = this.getFieldErrors(ex.getAllErrors());
+        List<FieldError> errors = getFieldErrors(ex.getAllErrors());
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(new ApiErrors(false,"Invalid Input",errors));

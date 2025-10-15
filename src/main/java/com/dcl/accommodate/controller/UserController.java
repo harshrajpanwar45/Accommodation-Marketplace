@@ -1,3 +1,4 @@
+
 package com.dcl.accommodate.controller;
 
 import com.dcl.accommodate.dto.request.UserLoginRequest;
@@ -9,7 +10,10 @@ import com.dcl.accommodate.service.contracts.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
 
@@ -29,7 +33,17 @@ public class UserController {
 
     @PostMapping("/public/login")
     public ResponseEntity<ApiResponse<AuthResponse>> loginUser(@Valid @RequestBody UserLoginRequest request){
-        com.dcl.accommodate.dto.response.AuthResponse response = userService.loginUser(request);
+        var response = userService.loginUser(request);
+        return ResponseEntity.ok(new ApiResponse<>(
+                true,
+                "User Successfully Logged In",
+                response
+        ));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshLogin() {
+        var response = userService.refreshLogin();
         return ResponseEntity.ok(new ApiResponse<>(
                 true,
                 "User Successfully Logged In",
