@@ -2,6 +2,7 @@ package com.dcl.accommodate.security.jwt;
 
 import com.dcl.accommodate.config.AppEnv;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
@@ -24,9 +25,9 @@ public class JwtService {
     private final Key key;
     private final AppEnv env;
 
-    public JwtService(AppEnv env, AppEnv env1){
+    public JwtService(AppEnv env){
         this.key = Keys.hmacShaKeyFor(Base64.getDecoder().decode(env.getJwt().getSecret()));
-        this.env = env1;
+        this.env = env;
     }
 
     public record TokenConfig(
@@ -64,12 +65,11 @@ public class JwtService {
         );
     }
 
-    private Claims getClaims(String token){
+    public Jws<Claims> getClaims(String token){
         return Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()    // return a parser to parse JWT
-                .parseClaimsJws(token)
-                .getBody();
+                .parseClaimsJws(token);
     }
 
 }

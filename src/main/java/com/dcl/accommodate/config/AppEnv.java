@@ -19,7 +19,7 @@ public class AppEnv {
     @Setter
     public static class Jwt{
         private String secret;
-        private Duration accessTtl;
-        private Duration refreshTtl;
+        private Duration accessTtl; // access-ttl
+        private Duration refreshTtl; //refresh-ttl
     }
 }
