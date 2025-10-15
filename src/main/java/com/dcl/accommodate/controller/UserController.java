@@ -5,6 +5,7 @@ import com.dcl.accommodate.dto.request.UserRegistrationRequest;
 import com.dcl.accommodate.dto.response.AuthResponse;
 import com.dcl.accommodate.dto.wrapper.ApiAck;
 import com.dcl.accommodate.dto.wrapper.ApiResponse;
+import com.dcl.accommodate.model.User1;
 import com.dcl.accommodate.service.contracts.UserService;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -29,11 +30,20 @@ public class UserController {
 
     @PostMapping("/public/login")
     public ResponseEntity<ApiResponse<AuthResponse>> loginUser(@Valid @RequestBody UserLoginRequest request){
-        com.dcl.accommodate.dto.response.AuthResponse response = userService.loginUser(request);
+        AuthResponse response = userService.loginUser(request);
         return ResponseEntity.ok(new ApiResponse<>(
                 true,
                 "User Successfully Logged In",
                 response
+        ));
+    }
+
+    @PostMapping("/refresh")
+    public ResponseEntity<ApiResponse<AuthResponse>> refreshLogin(){
+        return ResponseEntity.ok(new ApiResponse<>(
+                true,
+                "Refresh Successfull",
+                userService.refreshLogin()
         ));
     }
 }

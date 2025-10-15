@@ -23,6 +23,10 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.function.Supplier;
+
+import static com.dcl.accommodate.security.util.CurrentUser.getCurrentUserId;
 
 @Service
 @AllArgsConstructor
@@ -37,7 +41,7 @@ public class UserServiceImpl implements UserService {
     public void registerUser(UserRegistrationRequest registration) {
         if(repository.existsByEmail(registration.email()))
             throw new UserAlreadyExistByEmailException("User already registered with such email ID");
-        var user = this.toUser(registration);
+        var user = toUser(registration);
         //All users are GUEST by default
         user.setUserRole(UserRole.GUEST);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
@@ -56,6 +60,10 @@ public class UserServiceImpl implements UserService {
         var user = repository.findByEmail(auth.getName())
                 .orElseThrow(()-> new UsernameNotFoundException("User not found"));
 
+        return grantTokens(user);
+    }
+
+    private AuthResponse grantTokens(User user) {
         var accessToken = generateAccessToken(user);
         var refreshToken = generateRefreshToken(user);
 
@@ -67,6 +75,17 @@ public class UserServiceImpl implements UserService {
                 refreshToken.ttl().toSeconds()
         );
     }
+
+    @Override
+    public AuthResponse refreshLogin() {
+        Supplier<UsernameNotFoundException> userNotFound = () -> new UsernameNotFoundException("User not found");
+
+        UUID userId = getCurrentUserId().orElseThrow(userNotFound);
+        User user = repository.findById(userId).orElseThrow(userNotFound);
+
+        return grantTokens(user);
+    }
+
 
     private JwtService.TokenResult generateRefreshToken(User user) {
         var tokenConfig = new JwtService.TokenConfig(
